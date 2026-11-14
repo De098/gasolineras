@@ -1,0 +1,9 @@
+Gasolineras te enseña las gasolineras más baratas en el radio que elijas (de 1 a 50 km) alrededor de tu ubicación, con los precios oficiales del Ministerio para la Transición Ecológica.
+
+• Gasolina 95 y 98, diésel, diésel premium y GLP.
+• Lista ordenada por precio o por distancia, con la más barata en verde, o mapa con el precio sobre cada gasolinera.
+• Favoritas arriba, filtro «Solo abiertas ahora» e indicación de las que abren 24 h.
+• Al pulsar una gasolinera se abre la app de mapas que elijas.
+• Widget «Las 3 más baratas».
+
+Sin cuenta, sin anuncios y sin rastreo. La ubicación solo se usa en el móvil para calcular distancias: no se envía a ningún sitio. Si no hay red, usa los últimos precios guardados e indica su fecha. Código libre (GPL-3.0).

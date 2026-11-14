@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nombre">Gasolineras</string>
+    <string name="w_nombre_baratas">Las 3 más baratas</string>
+    <string name="w_desc_baratas">Las tres gasolineras más baratas cerca de ti; pulsa una para ver cómo llegar</string>
+</resources>

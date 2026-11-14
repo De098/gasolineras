@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Internet: bajar los precios del Ministerio y las teselas del mapa de OpenStreetMap. Nada más sale del móvil -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- ubicación precisa (GPS): para calcular qué gasolineras caen dentro del radio; se pide al abrir la app y nunca se envía a ningún sitio -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- ubicación aproximada: si la persona solo concede esta, la app funciona igual con la ubicación de red -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- sin permisos de segundo plano: la ubicación solo se lee con la app abierta -->
+    <uses-feature android:name="android.hardware.location" android:required="false" />
+
+    <!-- Android 11+: para saber si hay alguna app de mapas que abra «geo:» -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="geo" />
+        </intent>
+    </queries>
+
+    <application
+        android:label="@string/nombre"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:theme="@style/Tema"
+        android:enableOnBackInvokedCallback="true"
+        android:largeHeap="true"
+        android:allowBackup="false">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|density|smallestScreenSize"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- widget «Las 3 más baratas»: pulsar una fila abre la app de mapas; ⟳ vuelve a descargar los precios -->
+        <receiver
+            android:name=".WBaratas"
+            android:label="@string/w_nombre_baratas"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/w_baratas_info" />
+        </receiver>
+    </application>
+</manifest>

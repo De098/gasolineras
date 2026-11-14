@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gasolineras</title>
+<meta name="theme-color" content="#f6f5f4">
+<link rel="stylesheet" href="/leaflet/leaflet.css">
+<style>
+/* fuente Nunito (SIL Open Font License 1.1, ver nunito-LICENCIA.txt), guardada aquí */
+@font-face { font-family: "Nunito"; src: url("/nunito.woff2") format("woff2"); font-weight: 200 1000; font-display: swap; }
+/* Siempre tema claro: fondo claro y letra oscura */
+:root { color-scheme: light;
+  --fondo: #f6f5f4; --tarjeta: #ffffff; --texto: #241f31; --suave: #5f5a68; --acento: #1c71d8; --verde: #1b6e46;
+  --sel: #e6effb; --rojo: #b0161f; --rojo-fondo: #fde4e4; --borde: #78858f; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: var(--fondo); color: var(--texto); font: 17px/1.4 "Nunito", system-ui, sans-serif; }
+main { max-width: 560px; margin: 0 auto; padding: 12px 16px 24px; }
+button { font: inherit; color: inherit; background: var(--tarjeta); border-radius: 12px; min-height: 48px; padding: 0 16px;
+  border: 2px solid var(--borde); font-weight: 700; cursor: pointer; }
+button:active { background: var(--sel); }
+button.primario { background: var(--acento); color: #fff; border-color: var(--acento); }
+.cab { display: flex; align-items: center; gap: 10px; margin: 4px 0 12px; }
+.cab h1 { flex: 1; margin: 0; font-size: 1.6rem; display: flex; align-items: center; gap: 10px; }
+.cab img { width: 36px; height: 36px; }
+button.icono { width: 48px; padding: 0; font-size: 1.5rem; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.chips button { flex: 1 1 auto; min-height: 44px; padding: 0 10px; font-size: .95rem; }
+.chips button.on, .orden button.on { background: var(--acento); color: #fff; border-color: var(--acento); }
+.isla { background: var(--tarjeta); border: 2px solid var(--borde); border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; }
+.isla input[type=range] { width: 100%; height: 36px; accent-color: var(--acento); margin: 4px 0; }
+.orden { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
+.orden span { font-weight: 700; margin-right: 4px; }
+.orden button { min-height: 40px; padding: 0 12px; }
+label.solo { display: flex; align-items: center; gap: 10px; margin-top: 8px; min-height: 40px; font-weight: 700; }
+label.solo input { width: 22px; height: 22px; accent-color: var(--acento); }
+h2 { font-size: 1.05rem; margin: 14px 4px 8px; color: var(--suave); }
+.fila { display: flex; align-items: center; background: var(--tarjeta); border: 2px solid var(--borde); border-radius: 14px;
+  margin-bottom: 10px; cursor: pointer; }
+.fila:active { background: var(--sel); }
+.cuerpo { flex: 1; min-width: 0; padding: 10px 12px; }
+.nombre { font-weight: 800; font-size: 1.1rem; overflow-wrap: anywhere; }
+.sub { color: var(--suave); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ins { display: inline-block; font-size: .85rem; font-weight: 700; padding: 1px 10px; border-radius: 999px; margin-top: 4px;
+  background: var(--sel); color: var(--texto); border: 1.5px solid var(--borde); }
+.ins.mal { background: var(--rojo-fondo); color: var(--rojo); border-color: var(--rojo); }
+.precio { flex: none; font-weight: 800; font-size: 1.25rem; padding-right: 4px; white-space: nowrap; }
+.precio.barata { color: var(--verde); }
+.estrella { flex: none; width: 52px; min-height: 52px; border: 0; background: none; font-size: 1.7rem; padding: 0; }
+.msg { text-align: center; color: var(--suave); margin: 30px 12px; }
+.msg button { margin: 8px 4px 0; }
+.pie { text-align: center; color: var(--suave); font-size: .9rem; margin-top: 14px; }
+#mapa { height: 58vh; min-height: 320px; border: 2px solid var(--borde); border-radius: 14px; margin-bottom: 10px; }
+#ficha { position: sticky; bottom: 8px; }
+.mk { display: inline-block; transform: translate(-50%, -50%); background: #fff; border: 2px solid var(--borde); border-radius: 10px;
+  padding: 1px 6px; font: 800 13px "Nunito", sans-serif; color: var(--texto); white-space: nowrap; }
+.mk.b { background: var(--verde); border-color: var(--verde); color: #fff; }
+.yo { width: 16px; height: 16px; border-radius: 50%; background: #1c71d8; border: 3px solid #fff; box-shadow: 0 0 0 2px #1c71d8; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <div class="cab">
+    <h1><img src="/logo.svg" alt="">Gasolineras</h1>
+    <button class="icono" id="bref" aria-label="Actualizar">⟳</button>
+    <button id="bvista">Mapa</button>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="isla">
+    <div id="rtxt">Radio: 12 km</div>
+    <input type="range" id="radio" min="1" max="50" step="1" value="12">
+    <div class="orden"><span>Orden:</span><button id="oprecio">Precio</button><button id="odist">Distancia</button></div>
+    <label class="solo"><input type="checkbox" id="solo"> Solo abiertas ahora</label>
+  </div>
+  <div id="msg" class="msg" hidden></div>
+  <div id="vlista"></div>
+  <div id="vmapa" hidden><div id="mapa"></div><div id="ficha"></div></div>
+  <div class="pie" id="pie"></div>
+</main>
+<script src="/leaflet/leaflet.js"></script>
+<script>
+"use strict";
+const COMB = ["95", "98", "Diésel", "Diésel+", "GLP"];
+const $ = id => document.getElementById(id);
+function ls(k, d) { try { const v = localStorage.getItem("g_" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }
+function guarda(k, v) { try { localStorage.setItem("g_" + k, JSON.stringify(v)); } catch (e) {} }
+const S = { comb: ls("comb", 0), radio: ls("radio", 12), orden: ls("orden", "precio"), solo: ls("solo", false),
+  vista: ls("vista", "lista"), favs: new Set(ls("favs", [])), datos: null, fecha: "", sinRed: false, cargando: false, abierta: null };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fp = p => p.toFixed(3).replace(".", ",") + " €";
+const fk = k => k.toFixed(1).replace(".", ",") + " km";
+
+function cargar(forzar) {
+  S.cargando = true; pinta();
+  Gas.cargar(S.comb, S.radio, !!forzar);
+}
+
+window.alNativo = function (m) {
+  if (m.tipo === "cargando") { S.cargando = true; muestraMsg(null); }
+  else if (m.tipo === "datos") {
+    S.cargando = false; S.datos = m; S.fecha = m.fecha; S.sinRed = m.sinRed; muestraMsg(null);
+  } else {
+    S.cargando = false; S.datos = null;
+    if (m.tipo === "sinPermiso") muestraMsg("Hace falta el permiso de ubicación para buscar gasolineras cerca de ti.",
+      [["Reintentar", () => Gas.reintentar()], ["Ajustes de la app", () => Gas.ajustes()]]);
+    else if (m.tipo === "sinUbicacion") muestraMsg("No se ha podido obtener tu ubicación. Activa el GPS o la ubicación del móvil.", [["Reintentar", () => cargar(false)]]);
+    else muestraMsg(m.mensaje || "Ha habido un error.", [["Reintentar", () => cargar(true)]]);
+  }
+  pinta();
+};
+window.atras = function () { if ($("ficha").innerHTML) { $("ficha").innerHTML = ""; delete $("ficha").dataset.id; return true; } return false; };
+
+function muestraMsg(t, botones) {
+  const m = $("msg");
+  if (t === null) { m.hidden = true; return; }
+  m.hidden = false; m.innerHTML = "<div>" + esc(t) + "</div>";
+  (botones || []).forEach(([n, f]) => { const b = document.createElement("button"); b.textContent = n; b.onclick = f; m.appendChild(b); });
+}
+
+// lista visible: abiertas, ordenada; ya viene filtrada por radio y combustible
+function visibles() {
+  if (!S.datos) return [];
+  let l = S.datos.lista.filter(g => !(S.solo && g.ab === 2));
+  l.sort(S.orden === "precio" ? (a, b) => a.p - b.p || a.km - b.km : (a, b) => a.km - b.km || a.p - b.p);
+  return l;
+}
+
+function filaHtml(g, min) {
+  const et = g.h24 ? '<span class="ins">24 h</span>' : g.ab === 2 ? '<span class="ins mal">Cerrada</span>' : "";
+  const sub = [g.l, fk(g.km)].filter(Boolean).join(" · ");
+  return '<div class="fila" data-id="' + esc(g.id) + '"><div class="cuerpo"><div class="nombre">' + esc(g.r) + '</div><div class="sub">' + esc(sub) +
+    '</div>' + et + '</div><div class="precio' + (g.p === min ? " barata" : "") + '">' + fp(g.p) + '</div>' +
+    '<button class="estrella" aria-label="Favorita">' + (S.favs.has(g.id) ? "★" : "☆") + "</button></div>";
+}
+
+function enlaza(cont, porId) {
+  cont.querySelectorAll(".fila").forEach(f => {
+    const g = porId[f.dataset.id];
+    f.onclick = () => Gas.abrirMapa(g.lat, g.lon, g.r);
+    f.querySelector(".estrella").onclick = e => {
+      e.stopPropagation();
+      S.favs.has(g.id) ? S.favs.delete(g.id) : S.favs.add(g.id);
+      guarda("favs", [...S.favs]); pinta();
+    };
+  });
+}
+
+let mapa = null, capa = null;
+function pinta() {
+  $("bvista").textContent = S.vista === "mapa" ? "Lista" : "Mapa";
+  $("chips").querySelectorAll("button").forEach((b, i) => b.classList.toggle("on", i === S.comb));
+  $("oprecio").classList.toggle("on", S.orden === "precio"); $("odist").classList.toggle("on", S.orden === "distancia");
+  const l = visibles();
+  $("rtxt").textContent = "Radio: " + S.radio + " km" + (S.datos ? " · " + l.length + (l.length === 1 ? " gasolinera" : " gasolineras") : S.cargando ? " · buscando…" : "");
+  $("pie").textContent = S.cargando ? "Cargando…" : S.fecha ? "Ministerio · " + S.fecha + (S.sinRed ? " (sin red: datos guardados)" : "") : "";
+  const porId = {}; l.forEach(g => porId[g.id] = g);
+  const min = l.length ? Math.min(...l.map(g => g.p)) : 0;
+  $("vlista").hidden = S.vista !== "lista"; $("vmapa").hidden = S.vista !== "mapa";
+  if (S.vista === "lista") {
+    const fav = l.filter(g => S.favs.has(g.id)), resto = l.filter(g => !S.favs.has(g.id));
+    let h = "";
+    if (fav.length) h += "<h2>Favoritas</h2>" + fav.map(g => filaHtml(g, min)).join("") + (resto.length ? "<h2>Cerca de ti</h2>" : "");
+    h += resto.map(g => filaHtml(g, min)).join("");
+    if (S.datos && !l.length) h = '<div class="msg">No hay gasolineras en este radio con ese combustible.</div>';
+    $("vlista").innerHTML = h; enlaza($("vlista"), porId);
+  } else pintaMapa(l, porId, min);
+}
+
+function fichaDe(g, min) {
+  const f = $("ficha"); f.innerHTML = filaHtml(g, min); enlaza(f, { [g.id]: g });
+}
+
+function pintaMapa(l, porId, min) {
+  if (!mapa) {
+    mapa = L.map("mapa", { attributionControl: true });
+    mapa.attributionControl.setPrefix(false);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(mapa);
+    capa = L.layerGroup().addTo(mapa);
+    mapa.setView([40.4, -3.7], 6);
+  }
+  mapa.invalidateSize();
+  capa.clearLayers();
+  const fa = $("ficha").dataset.id;
+  if (!S.datos) return;
+  const d = S.datos, centro = [d.lat, d.lon];
+  L.marker(centro, { icon: L.divIcon({ className: "", html: '<div class="yo" style="transform:translate(-50%,-50%)"></div>', iconSize: [0, 0] }), interactive: false }).addTo(capa);
+  const circ = L.circle(centro, { radius: S.radio * 1000, color: "#1c71d8", weight: 2, fillOpacity: 0.05 }).addTo(capa);
+  l.slice().sort((a, b) => a.p - b.p).slice(0, 400).forEach(g => {
+    const m = L.marker([g.lat, g.lon], { icon: L.divIcon({ className: "", html: '<div class="mk' + (g.p === min ? " b" : "") + '">' + g.p.toFixed(3).replace(".", ",") + "</div>", iconSize: [0, 0] }) });
+    m.on("click", () => { $("ficha").dataset.id = g.id; fichaDe(g, min); });
+    m.addTo(capa);
+  });
+  if (!(mapa._centrado === S.radio + "|" + d.lat + "|" + d.lon)) { mapa.fitBounds(circ.getBounds()); mapa._centrado = S.radio + "|" + d.lat + "|" + d.lon; }
+  if (fa && porId[fa]) fichaDe(porId[fa], min); else $("ficha").innerHTML = "";
+}
+
+COMB.forEach((n, i) => {
+  const b = document.createElement("button"); b.textContent = n;
+  b.onclick = () => { if (S.comb === i) return; S.comb = i; guarda("comb", i); cargar(false); };
+  $("chips").appendChild(b);
+});
+$("radio").value = S.radio; $("solo").checked = S.solo;
+$("radio").oninput = e => { S.radio = +e.target.value; $("rtxt").textContent = "Radio: " + S.radio + " km"; };
+$("radio").onchange = () => { guarda("radio", S.radio); cargar(false); };
+$("oprecio").onclick = () => { S.orden = "precio"; guarda("orden", S.orden); pinta(); };
+$("odist").onclick = () => { S.orden = "distancia"; guarda("orden", S.orden); pinta(); };
+$("solo").onchange = e => { S.solo = e.target.checked; guarda("solo", S.solo); pinta(); };
+$("bref").onclick = () => cargar(true);
+$("bvista").onclick = () => { S.vista = S.vista === "mapa" ? "lista" : "mapa"; guarda("vista", S.vista); pinta(); };
+pinta(); cargar(false);
+</script>
+</body>
+</html>

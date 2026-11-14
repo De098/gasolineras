@@ -1,0 +1,1 @@
+First version: cheapest petrol stations near you as a list or map, favourites, open-now filter and widget.
