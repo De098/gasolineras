@@ -31,8 +31,26 @@ object Ubicacion {
         lm.getProviders(true).mapNotNull { try { lm.getLastKnownLocation(it) } catch (_: Exception) { null } }.maxByOrNull { it.time }
     } catch (_: Exception) { null }
 
+    // la última posición conseguida: al cambiar de combustible o de radio se reutiliza sin volver a pedir el GPS
+    private var reciente: Location? = null
+    private var recienteCuando = 0L
+    private const val REUTILIZAR = 2 * 60 * 1000L   // 2 minutos
+
     @Suppress("MissingPermission")
     fun obtener(c: Context, alTerminar: (Location?) -> Unit) {
+        val r = reciente
+        if (r != null && android.os.SystemClock.elapsedRealtime() - recienteCuando < REUTILIZAR) {
+            Handler(Looper.getMainLooper()).post { alTerminar(r) }
+            return
+        }
+        obtenerNueva(c) { l ->
+            if (l != null) { reciente = l; recienteCuando = android.os.SystemClock.elapsedRealtime() }
+            alTerminar(l)
+        }
+    }
+
+    @Suppress("MissingPermission")
+    private fun obtenerNueva(c: Context, alTerminar: (Location?) -> Unit) {
         val lm = c.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val provs = if (tienePermiso(c)) proveedores(c, lm) else emptyList()
         val h = Handler(Looper.getMainLooper())

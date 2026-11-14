@@ -1,6 +1,9 @@
 package io.github.de098.gasolineras
 
 import android.content.Context
+import android.util.JsonReader
+import android.util.JsonToken
+import java.io.InputStreamReader
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -75,6 +78,24 @@ object Datos {
 
     private fun num(s: String): Double = s.trim().replace(',', '.').toDoubleOrNull() ?: 0.0
 
+    /** Estación a partir de los campos leídos; null si no tiene coordenadas o no vende ninguno de los 5 combustibles. */
+    private fun estacion(o: Map<String, String>): Est? {
+        val lat = num(o["Latitud"] ?: ""); val lon = num(o["Longitud (WGS84)"] ?: "")
+        if (lat == 0.0 && lon == 0.0) return null
+        val pr = DoubleArray(5) { num(o[CLAVES[it]] ?: "") }
+        if (pr.all { it <= 0.0 }) return null
+        val loc = (o["Localidad"] ?: "").ifBlank { o["Municipio"] ?: "" }
+        return Est(o["IDEESS"] ?: "", (o["Rótulo"] ?: "").trim(), (o["Dirección"] ?: "").trim(), loc.trim(),
+            (o["Horario"] ?: "").trim(), lat, lon, pr)
+    }
+
+    /** Campos del Ministerio que se guardan; el resto se salta sin leerlo. */
+    private val USADOS = setOf("IDEESS", "Rótulo", "Dirección", "Localidad", "Municipio", "Horario", "Latitud", "Longitud (WGS84)") + CLAVES
+
+    /** Valor como texto (el Ministerio da todo como cadena, pero por si viene null o número). */
+    private fun cadena(jr: JsonReader): String =
+        if (jr.peek() == JsonToken.NULL) { jr.nextNull(); "" } else if (jr.peek() == JsonToken.STRING || jr.peek() == JsonToken.NUMBER) jr.nextString() else { jr.skipValue(); "" }
+
     private fun descargar(c: Context): Pair<Long, Resultado> {
         val destino = archivo(c)
         val tmp = File(destino.parentFile, "estaciones.json.tmp")
@@ -88,29 +109,45 @@ object Datos {
             if (con.responseCode != 200) throw ErrorUsuario("El Ministerio respondió ${con.responseCode}")
             var flujo = con.inputStream
             if ("gzip".equals(con.contentEncoding, true)) flujo = GZIPInputStream(flujo)
-            // el JSON original solo vive en memoria; a disco va únicamente la versión compactada
-            val texto = flujo.bufferedReader(Charsets.UTF_8).use { it.readText() }.removePrefix("﻿")
-            val raiz = JSONObject(texto)
-            val a = raiz.getJSONArray("ListaEESSPrecio")
+            // se lee en flujo (son unos 12 MB): el JSON original nunca está entero en memoria ni en disco;
+            // a disco va únicamente la versión compactada
+            val buf = java.io.BufferedInputStream(flujo)
+            buf.mark(3)   // saltar el BOM de UTF-8 si lo trae
+            if (!(buf.read() == 0xEF && buf.read() == 0xBB && buf.read() == 0xBF)) buf.reset()
             val salida = JSONArray()
-            val lista = ArrayList<Est>(a.length())
-            for (i in 0 until a.length()) {
-                val o = a.getJSONObject(i)
-                val lat = num(o.optString("Latitud")); val lon = num(o.optString("Longitud (WGS84)"))
-                if (lat == 0.0 && lon == 0.0) continue
-                val pr = DoubleArray(5) { num(o.optString(CLAVES[it])) }
-                if (pr.all { it <= 0.0 }) continue
-                val loc = o.optString("Localidad").ifBlank { o.optString("Municipio") }
-                val e = Est(o.optString("IDEESS"), o.optString("Rótulo").trim(), o.optString("Dirección").trim(), loc.trim(),
-                    o.optString("Horario").trim(), lat, lon, pr)
-                lista += e
-                val r = JSONArray().put(e.id).put(e.rotulo).put(e.dir).put(e.loc).put(e.horario).put(lat).put(lon)
-                for (p in pr) r.put(p)
-                salida.put(r)
-            }
+            val lista = ArrayList<Est>(12000)
+            var fecha = ""
+            val jr = JsonReader(InputStreamReader(buf, Charsets.UTF_8))
+            try {
+                jr.beginObject()
+                while (jr.hasNext()) {
+                    when (jr.nextName()) {
+                        "Fecha" -> fecha = cadena(jr)
+                        "ListaEESSPrecio" -> {
+                            jr.beginArray()
+                            while (jr.hasNext()) {
+                                val o = HashMap<String, String>()
+                                jr.beginObject()
+                                while (jr.hasNext()) {
+                                    val k = jr.nextName()
+                                    if (k in USADOS) o[k] = cadena(jr) else jr.skipValue()
+                                }
+                                jr.endObject()
+                                val e = estacion(o) ?: continue
+                                lista += e
+                                val r = JSONArray().put(e.id).put(e.rotulo).put(e.dir).put(e.loc).put(e.horario).put(e.lat).put(e.lon)
+                                for (p in e.precios) r.put(p)
+                                salida.put(r)
+                            }
+                            jr.endArray()
+                        }
+                        else -> jr.skipValue()
+                    }
+                }
+                jr.endObject()
+            } finally { jr.close() }
             if (lista.isEmpty()) throw ErrorUsuario("Respuesta vacía")
             val ahora = System.currentTimeMillis()
-            val fecha = raiz.optString("Fecha")
             tmp.writeText(JSONObject().put("t", ahora).put("fecha", fecha).put("e", salida).toString())
             if (!tmp.renameTo(destino)) { destino.delete(); tmp.renameTo(destino) }
             return Pair(ahora, Resultado(lista, fecha, false))
