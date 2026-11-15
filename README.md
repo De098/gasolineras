@@ -3,6 +3,12 @@
 Enseña las gasolineras más baratas en un radio ajustable (1-50 km) alrededor de tu ubicación, en lista o en mapa.
 Android 10 o superior. Licencia GPL-3.0. Hermana de [Cartera](https://github.com/De098/cartera).
 
+[![Descargar APK](https://img.shields.io/github/v/release/De098/gasolineras?label=Descargar%20APK&logo=android&style=for-the-badge)](https://github.com/De098/gasolineras/releases/latest)
+[![Obtainium](https://img.shields.io/badge/Obtainium-actualizaciones%20autom%C3%A1ticas-5a4fcf?style=for-the-badge)](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/De098/gasolineras)
+
+Descarga el `.apk` de la última versión (en **Assets**) y ábrelo en el móvil. Con [Obtainium](https://github.com/ImranR98/Obtainium)
+se instala y se actualiza sola: pulsa el segundo botón desde el móvil o añade `https://github.com/De098/gasolineras`.
+
 - **Combustibles**: Gasolina 95 y 98, Diésel, Diésel+ y GLP. Orden por precio o distancia, favoritas arriba,
   filtro «Solo abiertas ahora» (interpreta el horario del Ministerio) y etiqueta «24 h».
 - **Mapa** con Leaflet 1.9.4 (BSD-2, en `assets/web/leaflet/`) y teselas de OpenStreetMap.
