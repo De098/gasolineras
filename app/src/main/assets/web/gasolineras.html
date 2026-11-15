@@ -185,7 +185,8 @@ function fichaDe(g, min) {
 
 function pintaMapa(l, porId, min) {
   if (!mapa) {
-    mapa = L.map("mapa", { attributionControl: true, preferCanvas: true });
+    // canvas con margen de toque amplio: los puntos son pequeños para el dedo
+    mapa = L.map("mapa", { attributionControl: true, renderer: L.canvas({ tolerance: 12 }) });
     mapa.attributionControl.setPrefix(false);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(mapa);
     capa = L.layerGroup().addTo(mapa);
@@ -203,12 +204,16 @@ function pintaMapa(l, porId, min) {
   L.marker(centro, { icon: L.divIcon({ className: "", html: '<div class="yo" style="transform:translate(-50%,-50%)"></div>', iconSize: [0, 0] }), interactive: false }).addTo(capa);
   const circ = L.circle(centro, { radius: S.radio * 1000, color: "#1c71d8", weight: 2, fillOpacity: 0.05 }).addTo(capa);
   // las 30 más baratas con etiqueta de precio; el resto, puntos dibujados en canvas (mucho más ligeros)
-  l.slice().sort((a, b) => a.p - b.p).forEach((g, i) => {
-    const m = i < 30
-      ? L.marker([g.lat, g.lon], { icon: L.divIcon({ className: "", html: '<div class="mk' + (g.p === min ? " b" : "") + '">' + g.p.toFixed(3).replace(".", ",") + "</div>", iconSize: [0, 0] }) })
-      : L.circleMarker([g.lat, g.lon], { radius: 7, color: "#78858f", weight: 2, fillColor: "#ffffff", fillOpacity: 1 });
+  // al tocar un punto se convierte en etiqueta con su precio (y sale su ficha, como en las demás)
+  const etiqueta = g => {
+    const m = L.marker([g.lat, g.lon], { icon: L.divIcon({ className: "", html: '<div class="mk' + (g.p === min ? " b" : "") + '">' + g.p.toFixed(3).replace(".", ",") + "</div>", iconSize: [0, 0] }) });
     m.on("click", () => { $("ficha").dataset.id = g.id; fichaDe(g, min); });
-    m.addTo(capa);
+    return m.addTo(capa);
+  };
+  l.slice().sort((a, b) => a.p - b.p).forEach((g, i) => {
+    if (i < 30) { etiqueta(g); return; }
+    const c = L.circleMarker([g.lat, g.lon], { radius: 8, color: "#78858f", weight: 2, fillColor: "#ffffff", fillOpacity: 1 }).addTo(capa);
+    c.on("click", () => { capa.removeLayer(c); etiqueta(g); $("ficha").dataset.id = g.id; fichaDe(g, min); });
   });
   if (!(mapa._centrado === S.radio + "|" + d.lat + "|" + d.lon)) { mapa.fitBounds(circ.getBounds()); mapa._centrado = S.radio + "|" + d.lat + "|" + d.lon; }
   if (fa && porId[fa]) fichaDe(porId[fa], min); else $("ficha").innerHTML = "";
