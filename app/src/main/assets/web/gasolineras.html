@@ -111,6 +111,8 @@ function cargar(forzar) {
 }
 
 window.alNativo = function (m) {
+  // si se cambia de combustible o de radio deprisa, las respuestas pueden llegar desordenadas: se ignoran las viejas
+  if (m.tipo === "datos" && (m.comb !== S.comb || m.radio !== S.radio)) return;
   if (m.tipo === "cargando") { S.cargando = true; muestraMsg(null); }
   else if (m.tipo === "datos") {
     S.cargando = false; S.datos = m; S.fecha = m.fecha; S.sinRed = m.sinRed; muestraMsg(null);

@@ -151,7 +151,7 @@ class MainActivity : Activity() {
                             .put("km", g.km).put("lat", g.e.lat).put("lon", g.e.lon).put("p", g.precio)
                             .put("ab", Horario.estado(p, ahora)).put("h24", Horario.es24h(p)))
                     }
-                    js(JSONObject().put("tipo", "datos").put("lat", loc.latitude).put("lon", loc.longitude)
+                    js(JSONObject().put("tipo", "datos").put("comb", comb).put("lat", loc.latitude).put("lon", loc.longitude)
                         .put("radio", radio).put("fecha", Datos.fechaCorta(r.fecha)).put("sinRed", r.sinRed).put("lista", a))
                     Widgets.actualizarTodos(this)
                 } catch (e: ErrorUsuario) {
