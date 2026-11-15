@@ -40,7 +40,7 @@ h2 { font-size: 1.05rem; margin: 14px 4px 8px; color: var(--suave); }
 .fila:active { background: var(--sel); }
 .cuerpo { flex: 1; min-width: 0; padding: 10px 12px; }
 .nombre { font-weight: 800; font-size: 1.1rem; overflow-wrap: anywhere; }
-.sub { color: var(--suave); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sub { color: var(--suave); font-size: .85rem; line-height: 1.3; overflow-wrap: anywhere; }
 .ins { display: inline-block; font-size: .85rem; font-weight: 700; padding: 1px 10px; border-radius: 999px; margin-top: 4px;
   background: var(--sel); color: var(--texto); border: 1.5px solid var(--borde); }
 .ins.mal { background: var(--rojo-fondo); color: var(--rojo); border-color: var(--rojo); }
@@ -89,6 +89,17 @@ const S = { comb: ls("comb", 0), radio: ls("radio", 12), orden: ls("orden", "pre
   vista: ls("vista", "lista"), favs: new Set(ls("favs", [])), datos: null, fecha: "", sinRed: false, cargando: false, abierta: null };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const fp = p => p.toFixed(3).replace(".", ",") + " €";
+const MINUS = new Set(["de", "del", "la", "las", "los", "el", "y", "en", "a"]);
+function bonito(t) {
+  return String(t || "").toLowerCase().split(/(\s+|,|\.|\/|-|\()/).map((w, i) => {
+    if (!/[a-zñáéíóúü]/.test(w)) return w;
+    if (/^[ivxl]+$/.test(w) && w !== "l") return w.toUpperCase();            // números romanos
+    if (w === "km") return "km";
+    if (w.length <= 3 && !/[aeiouáéíóú]/.test(w)) return w.toUpperCase();   // N, SG, VA… (códigos de carretera)
+    if (i > 0 && MINUS.has(w)) return w;
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  }).join("");
+}
 const fk = k => k.toFixed(1).replace(".", ",") + " km";
 
 function cargar(forzar) {
@@ -128,8 +139,9 @@ function visibles() {
 
 function filaHtml(g, min) {
   const et = g.h24 ? '<span class="ins">24 h</span>' : g.ab === 2 ? '<span class="ins mal">Cerrada</span>' : "";
-  const sub = [g.l, fk(g.km)].filter(Boolean).join(" · ");
-  return '<div class="fila" data-id="' + esc(g.id) + '"><div class="cuerpo"><div class="nombre">' + esc(g.r) + '</div><div class="sub">' + esc(sub) +
+  const sub = [bonito(g.l), fk(g.km)].filter(Boolean).join(" · ");
+  return '<div class="fila" data-id="' + esc(g.id) + '"><div class="cuerpo"><div class="nombre">' + esc(g.r) + '</div>' +
+    (g.d ? '<div class="sub">' + esc(bonito(g.d)) + '</div>' : "") + '<div class="sub">' + esc(sub) +
     '</div>' + et + '</div><div class="precio' + (g.p === min ? " barata" : "") + '">' + fp(g.p) + '</div>' +
     '<button class="estrella" aria-label="Favorita">' + (S.favs.has(g.id) ? "★" : "☆") + "</button></div>";
 }
@@ -173,21 +185,28 @@ function fichaDe(g, min) {
 
 function pintaMapa(l, porId, min) {
   if (!mapa) {
-    mapa = L.map("mapa", { attributionControl: true });
+    mapa = L.map("mapa", { attributionControl: true, preferCanvas: true });
     mapa.attributionControl.setPrefix(false);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(mapa);
     capa = L.layerGroup().addTo(mapa);
     mapa.setView([40.4, -3.7], 6);
   }
   mapa.invalidateSize();
-  capa.clearLayers();
   const fa = $("ficha").dataset.id;
-  if (!S.datos) return;
+  if (!S.datos) { capa.clearLayers(); mapa._clave = null; return; }
   const d = S.datos, centro = [d.lat, d.lon];
+  // las marcas solo se rehacen si cambian los datos o los filtros (no al tocar una o al cambiar el orden)
+  const clave = [d.fecha, d.lat, d.lon, S.radio, S.comb, S.solo, l.length].join("|");
+  if (mapa._clave === clave) { if (fa && porId[fa]) fichaDe(porId[fa], min); else $("ficha").innerHTML = ""; return; }
+  mapa._clave = clave;
+  capa.clearLayers();
   L.marker(centro, { icon: L.divIcon({ className: "", html: '<div class="yo" style="transform:translate(-50%,-50%)"></div>', iconSize: [0, 0] }), interactive: false }).addTo(capa);
   const circ = L.circle(centro, { radius: S.radio * 1000, color: "#1c71d8", weight: 2, fillOpacity: 0.05 }).addTo(capa);
-  l.slice().sort((a, b) => a.p - b.p).slice(0, 400).forEach(g => {
-    const m = L.marker([g.lat, g.lon], { icon: L.divIcon({ className: "", html: '<div class="mk' + (g.p === min ? " b" : "") + '">' + g.p.toFixed(3).replace(".", ",") + "</div>", iconSize: [0, 0] }) });
+  // las 30 más baratas con etiqueta de precio; el resto, puntos dibujados en canvas (mucho más ligeros)
+  l.slice().sort((a, b) => a.p - b.p).forEach((g, i) => {
+    const m = i < 30
+      ? L.marker([g.lat, g.lon], { icon: L.divIcon({ className: "", html: '<div class="mk' + (g.p === min ? " b" : "") + '">' + g.p.toFixed(3).replace(".", ",") + "</div>", iconSize: [0, 0] }) })
+      : L.circleMarker([g.lat, g.lon], { radius: 7, color: "#78858f", weight: 2, fillColor: "#ffffff", fillOpacity: 1 });
     m.on("click", () => { $("ficha").dataset.id = g.id; fichaDe(g, min); });
     m.addTo(capa);
   });
