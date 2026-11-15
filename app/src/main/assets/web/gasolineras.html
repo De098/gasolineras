@@ -20,20 +20,23 @@ button { font: inherit; color: inherit; background: var(--tarjeta); border-radiu
   border: 2px solid var(--borde); font-weight: 700; cursor: pointer; }
 button:active { background: var(--sel); }
 button.primario { background: var(--acento); color: #fff; border-color: var(--acento); }
-.cab { display: flex; align-items: center; gap: 10px; margin: 4px 0 12px; }
-.cab h1 { flex: 1; margin: 0; font-size: 1.6rem; display: flex; align-items: center; gap: 10px; }
+.cab { display: flex; align-items: center; margin: 4px 0 12px; }
+.cab > * + * { margin-left: 10px; }   /* en vez de gap: en flex solo existe desde Chrome 84 */
+.cab h1 { flex: 1; margin: 0; font-size: 1.6rem; display: flex; align-items: center; }
+.cab h1 img { margin-right: 10px; }
 .cab img { width: 36px; height: 36px; }
 button.icono { width: 48px; padding: 0; font-size: 1.5rem; }
-.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-.chips button { flex: 1 1 auto; min-height: 44px; padding: 0 10px; font-size: .95rem; }
+.chips { display: flex; flex-wrap: wrap; margin: 0 -6px 6px 0; }
+.chips button { margin: 0 6px 6px 0; flex: 1 1 auto; min-height: 44px; padding: 0 10px; font-size: .95rem; }
 .chips button.on, .orden button.on { background: var(--acento); color: #fff; border-color: var(--acento); }
 .isla { background: var(--tarjeta); border: 2px solid var(--borde); border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; }
 .isla input[type=range] { width: 100%; height: 36px; accent-color: var(--acento); margin: 4px 0; }
-.orden { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
+.orden { display: flex; align-items: center; margin-top: 4px; }
+.orden button { margin-left: 6px; }
 .orden span { font-weight: 700; margin-right: 4px; }
 .orden button { min-height: 40px; padding: 0 12px; }
-label.solo { display: flex; align-items: center; gap: 10px; margin-top: 8px; min-height: 40px; font-weight: 700; }
-label.solo input { width: 22px; height: 22px; accent-color: var(--acento); }
+label.solo { display: flex; align-items: center; margin-top: 8px; min-height: 40px; font-weight: 700; }
+label.solo input { margin-right: 10px; width: 22px; height: 22px; accent-color: var(--acento); }
 h2 { font-size: 1.05rem; margin: 14px 4px 8px; color: var(--suave); }
 .fila { display: flex; align-items: center; background: var(--tarjeta); border: 2px solid var(--borde); border-radius: 14px;
   margin-bottom: 10px; cursor: pointer; }
