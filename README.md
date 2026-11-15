@@ -23,3 +23,36 @@ compactados en un único archivo de la app y se reutilizan 30 minutos; sin red s
 Sin cuenta, sin anuncios, sin rastreo y sin Google Play Services. La ubicación se usa solo en el móvil para calcular
 distancias y nunca se envía. Las únicas peticiones de red son los precios del Ministerio y las teselas del mapa.
 No tiene permisos de segundo plano.
+
+## Cómo está hecha
+
+Kotlin sin dependencias (solo la plataforma Android): nada de AndroidX ni Google Play Services. La interfaz es una página
+web empaquetada en `app/src/main/assets/web` (`gasolineras.html`, con Leaflet para el mapa) que se enseña en un `WebView`
+servido desde un host inventado; la página habla con la app por el puente `Gas` y las respuestas vuelven con
+`window.alNativo(…)`.
+
+| Archivo | Qué hace |
+|---|---|
+| `Datos.kt` | descarga los precios del Ministerio leyéndolos en flujo, guarda solo los campos usados en `estaciones.json` y calcula las gasolineras del radio |
+| `Ubicacion.kt` | ubicación con `LocationManager` (GPS o red), reutilizando la reciente si tiene menos de 2 minutos |
+| `MainActivity.kt` | el `WebView`, el puente con la página, el permiso de ubicación y abrir una gasolinera en la app de mapas |
+| `Widgets.kt` | el widget «Las 3 más baratas» y el selector de app de mapas |
+
+Permisos: `INTERNET` (precios del Ministerio y teselas del mapa), `ACCESS_FINE_LOCATION` y `ACCESS_COARSE_LOCATION`
+(solo con la app abierta; con la aproximada también funciona). **No** tiene ubicación en segundo plano.
+
+## Compilar
+
+```
+./gradlew assembleDebug      # APK de pruebas
+./gradlew assembleRelease    # sin firmar (F-Droid firma con su clave)
+```
+
+Hace falta JDK 17 o superior y el SDK de Android 36.
+
+## Licencias
+
+Código: GPL-3.0 (`LICENSE`). Leaflet 1.9.4: BSD-2 (`app/src/main/assets/web/leaflet/LICENSE`). Tipografía Nunito:
+SIL OFL 1.1 (`app/src/main/assets/web/nunito-LICENCIA.txt`). Mapa: © colaboradores de
+[OpenStreetMap](https://www.openstreetmap.org/copyright) (ODbL). Precios: Ministerio para la Transición Ecológica y el
+Reto Demográfico (datos abiertos).
