@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="nombre">Gasolineras</string>
-    <string name="w_nombre_baratas">Las 3 más baratas</string>
-    <string name="w_desc_baratas">Las tres gasolineras más baratas cerca de ti; pulsa una para ver cómo llegar</string>
+    <string name="nombre">Cheap Fuel</string>
+    <string name="w_nombre_baratas">3 cheapest</string>
+    <string name="w_desc_baratas">The three cheapest petrol stations near you. Tap one for directions.</string>
+    <string name="w_titulo">3 cheapest · %1$s</string>
+    <string name="w_vacio_abrir">Open the app to see petrol stations near you</string>
+    <string name="w_vacio_ninguna">No petrol stations within your radius</string>
+    <string name="actualizar">Refresh</string>
+    <string name="abrir_con">Open with</string>
+    <string name="fmt_precio_w">€%1$s</string>
+    <!-- Configuración regional para dar formato a números (idioma elegido por los recursos) -->
+    <string name="idioma_numeros" translatable="false">en-GB</string>
+    <string name="comb0">Unleaded 95</string>
+    <string name="comb1">Super unleaded 98</string>
+    <string name="comb2">Diesel</string>
+    <string name="comb3">Premium diesel</string>
+    <string name="comb4">LPG</string>
+    <string name="err_sin_datos">Couldn\'t download prices from Spain\'s Ministry for the Ecological Transition, and there\'s no saved data. Check your connection.</string>
+    <string name="err_ministerio">Spain\'s Ministry for the Ecological Transition replied with error %1$d</string>
+    <string name="err_vacia">The server sent an empty response</string>
+    <string name="err_precios">Couldn\'t read the prices.</string>
+    <!-- 1: día, 2: mes (número), 3: hora, 4: minutos, 5: mes (abreviado) -->
+    <string name="fmt_fecha">%1$d %5$s at %3$02d:%4$s</string>
+    <string-array name="meses_cortos">
+        <item>Jan</item><item>Feb</item><item>Mar</item><item>Apr</item><item>May</item><item>Jun</item>
+        <item>Jul</item><item>Aug</item><item>Sep</item><item>Oct</item><item>Nov</item><item>Dec</item>
+    </string-array>
 </resources>

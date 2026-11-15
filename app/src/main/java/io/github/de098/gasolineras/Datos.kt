@@ -31,11 +31,22 @@ object Datos {
     private const val URL_API = "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/"
     private const val VIGENCIA = 30L * 60 * 1000   // 30 minutos
     val CLAVES = listOf("Precio Gasolina 95 E5", "Precio Gasolina 98 E5", "Precio Gasoleo A", "Precio Gasoleo Premium", "Precio Gases licuados del petróleo")
-    val NOMBRES = listOf("Gasolina 95", "Gasolina 98", "Diésel", "Diésel+", "GLP")
+    /** Nombre largo del combustible (95, 98, diésel, diésel+, GLP) en el idioma del móvil. */
+    fun nombre(i: Int): String = s(listOf(R.string.comb0, R.string.comb1, R.string.comb2, R.string.comb3, R.string.comb4)[i])
+
+    // Context de la aplicación, guardado para poder traducir en este object (que no recibe Context en todas sus funciones)
+    private var ctx: Context? = null
+    fun iniciar(c: Context) { ctx = c.applicationContext }
+
+    /** Texto de res/values (en el idioma del móvil) con sus huecos. */
+    fun s(id: Int, vararg a: Any): String = ctx!!.getString(id, *a)
+
+    /** Formato de números según el idioma elegido para los recursos (coma decimal en castellano, punto en inglés). */
+    fun localeNumeros(): java.util.Locale = java.util.Locale.forLanguageTag(s(R.string.idioma_numeros))
 
     private var memoria: Pair<Long, Resultado>? = null   // (cuándo se descargó, datos)
 
-    private fun archivo(c: Context) = File(c.applicationContext.filesDir, "estaciones.json")
+    private fun archivo(c: Context): File { iniciar(c); return File(c.applicationContext.filesDir, "estaciones.json") }
 
     /** Datos guardados, sin tocar la red (para el widget). */
     @Synchronized
@@ -72,7 +83,7 @@ object Datos {
             return nuevo.second
         } catch (e: Exception) {
             if (viejo != null) return Resultado(viejo.second.lista, viejo.second.fecha, true)
-            throw ErrorUsuario("No se pueden bajar los precios del Ministerio y no hay datos guardados. Comprueba la conexión.")
+            throw ErrorUsuario(s(R.string.err_sin_datos))
         }
     }
 
@@ -106,7 +117,7 @@ object Datos {
             con.readTimeout = 60000
             con.setRequestProperty("Accept-Encoding", "gzip")
             con.setRequestProperty("Accept", "application/json")
-            if (con.responseCode != 200) throw ErrorUsuario("El Ministerio respondió ${con.responseCode}")
+            if (con.responseCode != 200) throw ErrorUsuario(s(R.string.err_ministerio, con.responseCode))
             var flujo = con.inputStream
             if ("gzip".equals(con.contentEncoding, true)) flujo = GZIPInputStream(flujo)
             // se lee en flujo (son unos 12 MB): el JSON original nunca está entero en memoria ni en disco;
@@ -146,7 +157,7 @@ object Datos {
                 }
                 jr.endObject()
             } finally { jr.close() }
-            if (lista.isEmpty()) throw ErrorUsuario("Respuesta vacía")
+            if (lista.isEmpty()) throw ErrorUsuario(s(R.string.err_vacia))
             val ahora = System.currentTimeMillis()
             tmp.writeText(JSONObject().put("t", ahora).put("fecha", fecha).put("e", salida).toString())
             if (!tmp.renameTo(destino)) { destino.delete(); tmp.renameTo(destino) }
@@ -157,11 +168,12 @@ object Datos {
         }
     }
 
-    /** «15/11/2026 0:41:12» → «15/11 a las 0:41». */
+    /** «15/11/2026 0:41:12» → «15/11 a las 0:41» (castellano) o «15 Nov at 00:41» (inglés). */
     fun fechaCorta(f: String): String {
         val m = Regex("(\\d+)/(\\d+)/\\d+\\s+(\\d+):(\\d+)").find(f) ?: return f
         val (d, mes, h, mi) = m.destructured
-        return "${d.toInt()}/${mes.toInt()} a las ${h.toInt()}:$mi"
+        val nombreMes = ctx!!.resources.getStringArray(R.array.meses_cortos)[(mes.toInt() - 1).coerceIn(0, 11)]
+        return s(R.string.fmt_fecha, d.toInt(), mes.toInt(), h.toInt(), mi, nombreMes)
     }
 
     fun distancia(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {

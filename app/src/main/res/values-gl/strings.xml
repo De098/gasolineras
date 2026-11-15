@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nombre">Gasolineras</string>
+    <string name="w_nombre_baratas">Las 3 más baratas</string>
+    <string name="w_desc_baratas">Las tres gasolineras más baratas cerca de ti; pulsa una para ver cómo llegar</string>
+    <string name="w_titulo">Las 3 más baratas · %1$s</string>
+    <string name="w_vacio_abrir">Abre la app para ver las gasolineras cercanas</string>
+    <string name="w_vacio_ninguna">Ninguna gasolinera en el radio</string>
+    <string name="actualizar">Actualizar</string>
+    <string name="abrir_con">Abrir con</string>
+    <string name="fmt_precio_w">%1$s €</string>
+    <string name="idioma_numeros" translatable="false">es-ES</string>
+    <string name="comb0">Gasolina 95</string>
+    <string name="comb1">Gasolina 98</string>
+    <string name="comb2">Diésel</string>
+    <string name="comb3">Diésel+</string>
+    <string name="comb4">GLP</string>
+    <string name="err_sin_datos">No se pueden bajar los precios del Ministerio y no hay datos guardados. Comprueba la conexión.</string>
+    <string name="err_ministerio">El Ministerio respondió %1$d</string>
+    <string name="err_vacia">Respuesta vacía</string>
+    <string name="err_precios">No se han podido leer los precios.</string>
+    <string name="fmt_fecha">%1$d/%2$d a las %3$d:%4$s</string>
+    <string-array name="meses_cortos">
+        <item>ene</item><item>feb</item><item>mar</item><item>abr</item><item>may</item><item>jun</item>
+        <item>jul</item><item>ago</item><item>sep</item><item>oct</item><item>nov</item><item>dic</item>
+    </string-array>
+</resources>

@@ -14,9 +14,10 @@ import kotlin.concurrent.thread
 /** Abrir una gasolinera en la app de mapas que se elija (o en el navegador si no hay ninguna). */
 object Mapas {
     fun intent(c: Context, lat: Double, lon: Double, nombre: String): Intent {
+        Datos.iniciar(c)
         val geo = Intent(Intent.ACTION_VIEW, Uri.parse("geo:$lat,$lon?q=$lat,$lon(${Uri.encode(nombre)})"))
         val hay = geo.resolveActivity(c.packageManager) != null
-        val i = if (hay) Intent.createChooser(geo, "Abrir con")
+        val i = if (hay) Intent.createChooser(geo, Datos.s(R.string.abrir_con))
         else Intent(Intent.ACTION_VIEW, Uri.parse("https://www.openstreetmap.org/?mlat=$lat&mlon=$lon#map=17/$lat/$lon"))
         return i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
@@ -32,10 +33,11 @@ object Widgets {
     }
 
     private fun pintar(c: Context, am: AppWidgetManager, wid: Int) {
+        Datos.iniciar(c)
         val v = RemoteViews(c.packageName, R.layout.w_baratas)
         val p = c.getSharedPreferences("gasolineras", Context.MODE_PRIVATE)
         val comb = p.getInt("comb", 0).coerceIn(0, 4)
-        v.setTextViewText(R.id.titulo, "Las 3 más baratas · " + Datos.NOMBRES[comb])
+        v.setTextViewText(R.id.titulo, Datos.s(R.string.w_titulo, Datos.nombre(comb)))
         val abrirApp = PendingIntent.getActivity(c, 9200 + wid,
             Intent(c, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
@@ -54,14 +56,14 @@ object Widgets {
         for ((i, g) in top.withIndex()) {
             val f = RemoteViews(c.packageName, R.layout.w_barata_fila)
             f.setTextViewText(R.id.t, g.e.rotulo)
-            f.setTextViewText(R.id.s, (g.e.loc + " · " + String.format(java.util.Locale("es", "ES"), "%.1f km", g.km)).trim(' ', '·'))
-            f.setTextViewText(R.id.p, String.format(java.util.Locale("es", "ES"), "%.3f €", g.precio))
+            f.setTextViewText(R.id.s, (g.e.loc + " · " + String.format(Datos.localeNumeros(), "%.1f km", g.km)).trim(' ', '·'))
+            f.setTextViewText(R.id.p, Datos.s(R.string.fmt_precio_w, String.format(Datos.localeNumeros(), "%.3f", g.precio)))
             f.setOnClickPendingIntent(R.id.fila, PendingIntent.getActivity(c, 100 + i + wid * 10,
                 Mapas.intent(c, g.e.lat, g.e.lon, g.e.rotulo), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
             v.addView(R.id.raiz_filas, f)
         }
         v.setViewVisibility(R.id.vacio, if (top.isEmpty()) View.VISIBLE else View.GONE)
-        v.setTextViewText(R.id.vacio, if (pos == null || datos == null) "Abre la app para ver las gasolineras cercanas" else "Ninguna gasolinera en el radio")
+        v.setTextViewText(R.id.vacio, if (pos == null || datos == null) Datos.s(R.string.w_vacio_abrir) else Datos.s(R.string.w_vacio_ninguna))
         am.updateAppWidget(wid, v)
     }
 }

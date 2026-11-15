@@ -8,5 +8,5 @@
             android:textSize="13dp" android:textColor="#6F6A78" android:maxLines="1" android:ellipsize="end" android:fontFamily="@font/nunito"/>
     </LinearLayout>
     <TextView android:id="@+id/p" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp"
-        android:textSize="18dp" android:textStyle="bold" android:textColor="#1B6E46" android:fontFamily="@font/nunito"/>
+        android:textSize="18dp" android:textStyle="bold" android:textColor="#26A269" android:fontFamily="@font/nunito"/>
 </LinearLayout>

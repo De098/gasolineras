@@ -70,6 +70,7 @@ class MainActivity : Activity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(estado: Bundle?) {
         super.onCreate(estado)
+        Datos.iniciar(this)
         val raiz = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(getColor(R.color.fondo))
@@ -157,7 +158,7 @@ class MainActivity : Activity() {
                 } catch (e: ErrorUsuario) {
                     js(JSONObject().put("tipo", "error").put("mensaje", e.message))
                 } catch (e: Exception) {
-                    js(JSONObject().put("tipo", "error").put("mensaje", "No se han podido leer los precios."))
+                    js(JSONObject().put("tipo", "error").put("mensaje", Datos.s(R.string.err_precios)))
                 }
             }
         }
