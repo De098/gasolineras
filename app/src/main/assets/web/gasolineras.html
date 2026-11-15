@@ -54,7 +54,7 @@ h2 { font-size: 1.05rem; margin: 14px 4px 8px; color: var(--suave); }
 .msg button { margin: 8px 4px 0; }
 .pie { text-align: center; color: var(--suave); font-size: .9rem; margin-top: 14px; }
 #mapa { height: 58vh; min-height: 320px; border: 2px solid var(--borde); border-radius: 14px; margin-bottom: 10px; }
-#ficha { position: sticky; bottom: 8px; }
+#ficha .msg { margin: 0 0 10px; padding: 18px 12px; background: var(--tarjeta); border: 2px dashed var(--borde); border-radius: 14px; }
 .mk { display: inline-block; transform: translate(-50%, -50%); background: #fff; border: 2px solid var(--borde); border-radius: 10px;
   padding: 1px 6px; font: 800 13px "Nunito", sans-serif; color: var(--texto); white-space: nowrap; }
 .mk.b { background: var(--verde); border-color: var(--verde); color: #fff; }
@@ -70,7 +70,7 @@ h2 { font-size: 1.05rem; margin: 14px 4px 8px; color: var(--suave); }
     <button id="bvista">Mapa</button>
   </div>
   <div class="chips" id="chips"></div>
-  <div class="isla">
+  <div class="isla" id="opciones">
     <div id="rtxt">Radio: 12 km</div>
     <input type="range" id="radio" min="1" max="50" step="1" value="12">
     <div class="orden"><span>Orden:</span><button id="oprecio">Precio</button><button id="odist">Distancia</button></div>
@@ -78,7 +78,7 @@ h2 { font-size: 1.05rem; margin: 14px 4px 8px; color: var(--suave); }
   </div>
   <div id="msg" class="msg" hidden></div>
   <div id="vlista"></div>
-  <div id="vmapa" hidden><div id="mapa"></div><div id="ficha"></div></div>
+  <div id="vmapa" hidden><div id="ficha"></div><div id="mapa"></div></div>
   <div class="pie" id="pie"></div>
 </main>
 <script src="/leaflet/leaflet.js"></script>
@@ -123,7 +123,13 @@ window.alNativo = function (m) {
   }
   pinta();
 };
-window.atras = function () { if ($("ficha").innerHTML) { $("ficha").innerHTML = ""; delete $("ficha").dataset.id; return true; } return false; };
+window.atras = function () {
+  if (S.vista !== "mapa") return false;
+  if ($("ficha").dataset.id) { delete $("ficha").dataset.id; fichaVacia(); return true; }
+  S.vista = "lista"; guarda("vista", S.vista); pinta(); return true;
+};
+// en el mapa, sin gasolinera elegida: aviso en el sitio de la ficha
+function fichaVacia() { $("ficha").innerHTML = '<div class="msg">Toca una gasolinera del mapa para verla aquí.</div>'; }
 
 function muestraMsg(t, botones) {
   const m = $("msg");
@@ -171,7 +177,7 @@ function pinta() {
   $("pie").textContent = S.cargando ? "Cargando…" : S.fecha ? "Ministerio · " + S.fecha + (S.sinRed ? " (sin red: datos guardados)" : "") : "";
   const porId = {}; l.forEach(g => porId[g.id] = g);
   const min = l.length ? Math.min(...l.map(g => g.p)) : 0;
-  $("vlista").hidden = S.vista !== "lista"; $("vmapa").hidden = S.vista !== "mapa";
+  $("vlista").hidden = S.vista !== "lista"; $("vmapa").hidden = S.vista !== "mapa"; $("opciones").hidden = S.vista === "mapa";
   if (S.vista === "lista") {
     const fav = l.filter(g => S.favs.has(g.id)), resto = l.filter(g => !S.favs.has(g.id));
     let h = "";
@@ -201,11 +207,11 @@ function pintaMapa(l, porId, min) {
   }
   mapa.invalidateSize();
   const fa = $("ficha").dataset.id;
-  if (!S.datos) { capa.clearLayers(); mapa._clave = null; return; }
+  if (!S.datos) { capa.clearLayers(); mapa._clave = null; $("ficha").innerHTML = ""; return; }
   const d = S.datos, centro = [d.lat, d.lon];
   // las marcas solo se rehacen si cambian los datos o los filtros (no al tocar una o al cambiar el orden)
   const clave = [d.fecha, d.lat, d.lon, S.radio, S.comb, S.solo, l.length].join("|");
-  if (mapa._clave === clave) { if (fa && porId[fa]) fichaDe(porId[fa], min); else $("ficha").innerHTML = ""; return; }
+  if (mapa._clave === clave) { if (fa && porId[fa]) fichaDe(porId[fa], min); else fichaVacia(); return; }
   mapa._clave = clave;
   capa.clearLayers();
   L.marker(centro, { icon: L.divIcon({ className: "", html: '<div class="yo" style="transform:translate(-50%,-50%)"></div>', iconSize: [0, 0] }), interactive: false }).addTo(capa);
@@ -223,7 +229,7 @@ function pintaMapa(l, porId, min) {
     c.on("click", () => { capa.removeLayer(c); etiqueta(g); $("ficha").dataset.id = g.id; fichaDe(g, min); });
   });
   if (!(mapa._centrado === S.radio + "|" + d.lat + "|" + d.lon)) { mapa.fitBounds(circ.getBounds()); mapa._centrado = S.radio + "|" + d.lat + "|" + d.lon; }
-  if (fa && porId[fa]) fichaDe(porId[fa], min); else $("ficha").innerHTML = "";
+  if (fa && porId[fa]) fichaDe(porId[fa], min); else fichaVacia();
 }
 
 COMB.forEach((n, i) => {
