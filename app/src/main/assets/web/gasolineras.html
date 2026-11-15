@@ -186,9 +186,13 @@ function fichaDe(g, min) {
 function pintaMapa(l, porId, min) {
   if (!mapa) {
     // canvas con margen de toque amplio: los puntos son pequeños para el dedo
-    mapa = L.map("mapa", { attributionControl: true, renderer: L.canvas({ tolerance: 12 }) });
+    // sin fundidos ni animar las etiquetas al hacer zoom: en el WebView del móvil es lo que más tironea
+    mapa = L.map("mapa", { attributionControl: true, renderer: L.canvas({ tolerance: 12 }),
+      fadeAnimation: false, markerZoomAnimation: false });
     mapa.attributionControl.setPrefix(false);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(mapa);
+    // teselas: no pedirlas a mitad de zoom ni de arrastre, y guardar más alrededor para que al mover no salgan huecos
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap",
+      updateWhenZooming: false, updateWhenIdle: true, keepBuffer: 4 }).addTo(mapa);
     capa = L.layerGroup().addTo(mapa);
     mapa.setView([40.4, -3.7], 6);
   }

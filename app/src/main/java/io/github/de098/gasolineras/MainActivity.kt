@@ -81,6 +81,7 @@ class MainActivity : Activity() {
             settings.textZoom = Math.round(resources.configuration.fontScale * 100).coerceIn(80, 200)
             settings.allowFileAccess = false
             settings.allowContentAccess = false
+            settings.offscreenPreRaster = true   // dibuja de antemano lo que está fuera de pantalla: el mapa va más suave
             setBackgroundColor(getColor(R.color.fondo))
             webViewClient = Cliente()
             addJavascriptInterface(Puente(), "Gas")
