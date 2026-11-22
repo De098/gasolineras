@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nombre">Carburant pas cher</string>
+    <string name="w_nombre_baratas">Les 3 moins chères</string>
+    <string name="w_desc_baratas">Les trois stations les moins chères autour de vous. Touchez-en une pour l\'itinéraire.</string>
+    <string name="w_titulo">3 moins chères · %1$s</string>
+    <string name="w_vacio_abrir">Ouvrez l\'appli pour voir les stations autour de vous</string>
+    <string name="w_vacio_ninguna">Aucune station dans votre rayon</string>
+    <string name="actualizar">Actualiser</string>
+    <string name="abrir_con">Ouvrir avec</string>
+    <string name="fmt_precio_w">%1$s €</string>
+    <!-- Configuración regional para dar formato a números (idioma elegido por los recursos) -->
+    <string name="idioma_numeros" translatable="false">fr-FR</string>
+    <string name="comb0">Sans plomb 95</string>
+    <string name="comb1">Sans plomb 98</string>
+    <string name="comb2">Gazole</string>
+    <string name="comb3">Gazole premium</string>
+    <string name="comb4">GPL</string>
+    <string name="err_sin_datos">Impossible de télécharger les prix du ministère espagnol de la Transition écologique, et aucune donnée n\'est enregistrée. Vérifiez votre connexion.</string>
+    <string name="err_ministerio">Le ministère espagnol de la Transition écologique a répondu avec l\'erreur %1$d</string>
+    <string name="err_vacia">Le serveur a renvoyé une réponse vide</string>
+    <string name="err_precios">Impossible de lire les prix.</string>
+    <!-- 1: día, 2: mes (número), 3: hora, 4: minutos, 5: mes (abreviado) -->
+    <string name="fmt_fecha">%1$d %5$s à %3$d:%4$s</string>
+    <string-array name="meses_cortos">
+        <item>janv.</item><item>févr.</item><item>mars</item><item>avr.</item><item>mai</item><item>juin</item>
+        <item>juil.</item><item>août</item><item>sept.</item><item>oct.</item><item>nov.</item><item>déc.</item>
+    </string-array>
+</resources>

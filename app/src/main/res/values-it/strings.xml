@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nombre">Pieno Conveniente</string>
+    <string name="w_nombre_baratas">I 3 più economici</string>
+    <string name="w_desc_baratas">I tre distributori più economici vicino a te. Toccane uno per le indicazioni.</string>
+    <string name="w_titulo">I 3 più economici · %1$s</string>
+    <string name="w_vacio_abrir">Apri l’app per vedere i distributori vicino a te</string>
+    <string name="w_vacio_ninguna">Nessun distributore nel tuo raggio</string>
+    <string name="actualizar">Aggiorna</string>
+    <string name="abrir_con">Apri con</string>
+    <string name="fmt_precio_w">%1$s €</string>
+    <!-- Configuración regional para dar formato a números (idioma elegido por los recursos) -->
+    <string name="idioma_numeros" translatable="false">it-IT</string>
+    <string name="comb0">Benzina 95</string>
+    <string name="comb1">Benzina 98</string>
+    <string name="comb2">Gasolio</string>
+    <string name="comb3">Gasolio premium</string>
+    <string name="comb4">GPL</string>
+    <string name="err_sin_datos">Impossibile scaricare i prezzi dal Ministero spagnolo per la Transizione Ecologica e non ci sono dati salvati. Controlla la connessione.</string>
+    <string name="err_ministerio">Il Ministero spagnolo ha risposto con l’errore %1$d</string>
+    <string name="err_vacia">Il server ha inviato una risposta vuota</string>
+    <string name="err_precios">Impossibile leggere i prezzi.</string>
+    <!-- 1: día, 2: mes (número), 3: hora, 4: minutos, 5: mes (abreviado) -->
+    <string name="fmt_fecha">%1$d %5$s alle %3$d:%4$s</string>
+    <string-array name="meses_cortos">
+        <item>gen</item><item>feb</item><item>mar</item><item>apr</item><item>mag</item><item>giu</item>
+        <item>lug</item><item>ago</item><item>set</item><item>ott</item><item>nov</item><item>dic</item>
+    </string-array>
+</resources>

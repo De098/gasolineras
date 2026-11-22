@@ -1,4 +1,4 @@
-Gasolineras shows the cheapest petrol stations within the radius you choose (1 to 50 km) around your location, using the official prices from Spain's Ministry for the Ecological Transition.
+Cheap Fuel shows the cheapest petrol stations within the radius you choose (1 to 50 km) around your location, using the official prices from Spain's Ministry for the Ecological Transition.
 
 • Petrol 95 and 98, diesel, premium diesel and LPG.
 • List sorted by price or distance with the cheapest in green, or a map with the price on every station.

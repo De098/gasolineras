@@ -1,0 +1,9 @@
+Pieno Conveniente ti mostra i distributori più economici nel raggio che scegli (da 1 a 50 km) intorno a te, con i prezzi ufficiali del Ministero spagnolo per la Transizione Ecologica. Funziona quindi in Spagna.
+
+• Benzina 95 e 98, gasolio, gasolio premium e GPL.
+• Elenco ordinato per prezzo o per distanza, con il più economico in verde, oppure mappa con il prezzo su ogni distributore.
+• Preferiti in cima, filtro «Solo aperti ora» ed etichetta per quelli aperti H24.
+• Toccando un distributore si apre l'app di mappe che preferisci.
+• Widget «I 3 più economici».
+
+Nessun account, nessuna pubblicità, nessun tracciamento. La posizione viene usata solo sul telefono per calcolare le distanze e non viene inviata da nessuna parte. Senza connessione mostra gli ultimi prezzi salvati con la loro data. Software libero (GPL-3.0).

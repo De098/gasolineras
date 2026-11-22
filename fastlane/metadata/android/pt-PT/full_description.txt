@@ -1,0 +1,9 @@
+O Combustível Barato mostra os postos de abastecimento mais baratos no raio que escolher (de 1 a 50 km) à sua volta, com os preços oficiais do Ministério espanhol para a Transição Ecológica. Funciona, portanto, em Espanha.
+
+• Gasolina 95 e 98, gasóleo, gasóleo premium e GPL Auto.
+• Lista ordenada por preço ou por distância, com o mais barato a verde, ou mapa com o preço em cada posto.
+• Favoritos no topo, filtro «Só abertos agora» e indicação dos postos abertos 24 horas.
+• Ao tocar num posto, abre a app de mapas que escolher.
+• Widget «Os 3 mais baratos».
+
+Sem conta, sem anúncios e sem rastreio. A sua localização só é usada no telemóvel para calcular distâncias e nunca é enviada. Sem ligação, mostra os últimos preços guardados com a respetiva data. Software livre (GPL-3.0).

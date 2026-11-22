@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nombre">Günstig tanken</string>
+    <string name="w_nombre_baratas">Die 3 günstigsten</string>
+    <string name="w_desc_baratas">Die drei günstigsten Tankstellen in deiner Nähe. Tippe auf eine, um dorthin zu navigieren.</string>
+    <string name="w_titulo">Die 3 günstigsten · %1$s</string>
+    <string name="w_vacio_abrir">Öffne die App, um Tankstellen in deiner Nähe zu sehen</string>
+    <string name="w_vacio_ninguna">Keine Tankstellen in deinem Umkreis</string>
+    <string name="actualizar">Aktualisieren</string>
+    <string name="abrir_con">Öffnen mit</string>
+    <string name="fmt_precio_w">%1$s €</string>
+    <!-- Configuración regional para dar formato a números (idioma elegido por los recursos) -->
+    <string name="idioma_numeros" translatable="false">de-DE</string>
+    <string name="comb0">Super 95</string>
+    <string name="comb1">Super Plus 98</string>
+    <string name="comb2">Diesel</string>
+    <string name="comb3">Premium-Diesel</string>
+    <string name="comb4">Autogas (LPG)</string>
+    <string name="err_sin_datos">Die Preise des spanischen Ministeriums für den ökologischen Wandel konnten nicht geladen werden, und es sind keine gespeichert. Prüfe deine Verbindung.</string>
+    <string name="err_ministerio">Das spanische Ministerium hat mit Fehler %1$d geantwortet</string>
+    <string name="err_vacia">Der Server hat eine leere Antwort geschickt</string>
+    <string name="err_precios">Die Preise konnten nicht gelesen werden.</string>
+    <!-- 1: día, 2: mes (número), 3: hora, 4: minutos, 5: mes (abreviado) -->
+    <string name="fmt_fecha">%1$d. %5$s, %3$d:%4$s Uhr</string>
+    <string-array name="meses_cortos">
+        <item>Jan.</item><item>Feb.</item><item>März</item><item>Apr.</item><item>Mai</item><item>Juni</item>
+        <item>Juli</item><item>Aug.</item><item>Sept.</item><item>Okt.</item><item>Nov.</item><item>Dez.</item>
+    </string-array>
+</resources>

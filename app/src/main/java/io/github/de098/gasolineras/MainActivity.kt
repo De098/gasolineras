@@ -60,6 +60,10 @@ class MainActivity : Activity() {
             startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
         }
 
+        /** Factor de letra de Android; la página lo aplica como zoom CSS (como Recordatorios). */
+        @JavascriptInterface
+        fun escala(): Float = resources.configuration.fontScale
+
         /** Abre la gasolinera en la app de mapas elegida. */
         @JavascriptInterface
         fun abrirMapa(lat: Double, lon: Double, nombre: String) = runOnUiThread {
@@ -79,7 +83,7 @@ class MainActivity : Activity() {
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true   // localStorage: radio, combustible, favoritas…
             settings.setSupportZoom(false)
-            settings.textZoom = Math.round(resources.configuration.fontScale * 100).coerceIn(80, 200)
+            settings.textZoom = minOf(100, Math.round(resources.configuration.fontScale * 100))
             settings.allowFileAccess = false
             settings.allowContentAccess = false
             settings.offscreenPreRaster = true   // dibuja de antemano lo que está fuera de pantalla: el mapa va más suave

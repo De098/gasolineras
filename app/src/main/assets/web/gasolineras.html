@@ -22,10 +22,24 @@ button:active { background: var(--sel); }
 button.primario { background: var(--acento); color: #fff; border-color: var(--acento); }
 .cab { display: flex; align-items: center; margin: 4px 0 12px; }
 .cab > * + * { margin-left: 10px; }   /* en vez de gap: en flex solo existe desde Chrome 84 */
-.cab h1 { flex: 1; margin: 0; font-size: 1.6rem; display: flex; align-items: center; }
+.cab h1 { flex: 1; min-width: 0; margin: 0; font-size: 1.6rem; display: flex; align-items: center; }
+.cab h1 span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }   /* el título cede sitio: el botón Mapa/Lista nunca se sale */
+.cab button { flex: none; }
 .cab h1 img { margin-right: 10px; }
 .cab img { width: 36px; height: 36px; }
-button.icono { width: 48px; padding: 0; font-size: 1.5rem; }
+button.icono { width: 48px; flex: none; padding: 0; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; }
+button.icono svg { width: 26px; height: 26px; display: block; }
+/* de qué hora son los precios (en lugar del botón de actualizar: la app los baja sola si tienen más de 30 min) */
+.hora { flex: none; text-align: center; color: var(--suave); font-size: .72rem; line-height: 1.15; white-space: nowrap; }
+.hora b { display: block; color: var(--texto); font-size: 1rem; }
+/* ventana estrecha (con letra grande): se aprieta la cabecera */
+.estrecho .cab h1 { font-size: 1.3rem; min-width: 0; }
+.estrecho .cab h1 img { display: none; }
+.estrecho .cab > * + * { margin-left: 6px; }
+.estrecho button { padding: 0 10px; }
+.estrecho button.icono { width: 44px; padding: 0; }
+.estrecho main { padding-left: 10px; padding-right: 10px; }
+.estrecho .precio { font-size: 1.1rem; padding-right: 8px; }
 .chips { display: flex; flex-wrap: wrap; margin: 0 -6px 6px 0; }
 .chips button { margin: 0 6px 6px 0; flex: 1 1 auto; min-height: 44px; padding: 0 10px; font-size: .95rem; }
 .chips button.on, .orden button.on { background: var(--acento); color: #fff; border-color: var(--acento); }
@@ -38,18 +52,34 @@ button.icono { width: 48px; padding: 0; font-size: 1.5rem; }
 label.solo { display: flex; align-items: center; margin-top: 8px; min-height: 40px; font-weight: 700; }
 label.solo input { margin-right: 10px; width: 22px; height: 22px; accent-color: var(--acento); }
 h2 { font-size: 1.05rem; margin: 14px 4px 8px; color: var(--suave); }
-.fila { display: flex; align-items: center; background: var(--tarjeta); border: 2px solid var(--borde); border-radius: 14px;
-  margin-bottom: 10px; cursor: pointer; }
+.hueco { position: relative; margin-bottom: 10px; border-radius: 14px; overflow: hidden; touch-action: pan-y; -webkit-user-select: none; user-select: none; }
+.detras { position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 14px; background: var(--sel); display: flex; align-items: center;
+  justify-content: space-between; padding: 0 18px; font-weight: 800; font-size: .9rem; color: var(--texto); }
+.detras .lado { display: flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; opacity: .35; visibility: hidden; transition: opacity .15s, transform .15s; }
+.detras .lado svg { width: 28px; height: 28px; flex: none; }
+.detras .lado .t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* solo se ve el lado que se está destapando (fila a la derecha: el izquierdo; a la izquierda: el derecho) */
+.detras.ver-izq .lado.izq, .detras.ver-der .lado.der { visibility: visible; }
+.detras.listo { background: #d6eefb; }
+.detras.listo .lado { opacity: 1; transform: scale(1.08); }
+.fila { position: relative; display: flex; align-items: center; background: var(--tarjeta); border: 2px solid var(--borde); border-radius: 14px;
+  cursor: pointer; transition: transform .25s ease; }
+.fila.arrastrando { transition: none; }
 .fila:active { background: var(--sel); }
+@keyframes asoma { 0% { transform: translateX(0); } 30% { transform: translateX(-70px); } 55% { transform: translateX(-70px); } 100% { transform: translateX(0); } }
+.fila.pista { animation: asoma 1.6s ease-in-out; }
+.detras.pista .lado.der { visibility: visible; opacity: 1; }
+.marca { flex: none; width: 24px; height: 24px; margin-right: 8px; }
+.marca svg, h2 svg { width: 100%; height: 100%; display: block; }
+h2 .marca { display: inline-block; vertical-align: middle; width: 20px; height: 20px; margin: 0 6px 2px 0; }
 .cuerpo { flex: 1; min-width: 0; padding: 10px 12px; }
 .nombre { font-weight: 800; font-size: 1.1rem; overflow-wrap: anywhere; }
 .sub { color: var(--suave); font-size: .85rem; line-height: 1.3; overflow-wrap: anywhere; }
 .ins { display: inline-block; font-size: .85rem; font-weight: 700; padding: 1px 10px; border-radius: 999px; margin-top: 4px;
   background: var(--sel); color: var(--texto); border: 1.5px solid var(--borde); }
 .ins.mal { background: var(--rojo-fondo); color: var(--rojo); border-color: var(--rojo); }
-.precio { flex: none; font-weight: 800; font-size: 1.25rem; padding-right: 4px; white-space: nowrap; }
+.precio { flex: none; font-weight: 800; font-size: 1.25rem; padding-right: 12px; white-space: nowrap; }
 .precio.barata { color: var(--verde); }
-.estrella { flex: none; width: 52px; min-height: 52px; border: 0; background: none; font-size: 1.7rem; padding: 0; }
 .msg { text-align: center; color: var(--suave); margin: 30px 12px; }
 .msg button { margin: 8px 4px 0; }
 .pie { text-align: center; color: var(--suave); font-size: .9rem; margin-top: 14px; }
@@ -66,7 +96,7 @@ h2 { font-size: 1.05rem; margin: 14px 4px 8px; color: var(--suave); }
 <main>
   <div class="cab">
     <h1><img src="/logo.svg" alt=""><span data-t="app">Gasolineras</span></h1>
-    <button class="icono" id="bref" data-t-aria="actualizar">⟳</button>
+    <span class="hora" id="hora"></span>
     <button id="bvista" data-t="mapa">Mapa</button>
   </div>
   <div class="chips" id="chips"></div>
@@ -85,6 +115,22 @@ h2 { font-size: 1.05rem; margin: 14px 4px 8px; color: var(--suave); }
 <script src="/textos.js"></script>
 <script>
 "use strict";
+// Letra grande de Android: zoom CSS solo en los bloques que NO son el mapa (el zoom sobre un ancestro de Leaflet
+// descoloca toques y arrastres). Como en Recordatorios: tope 1,3 y nunca menos de 300 px de ancho útil.
+let Z = 1;
+const ZOOM_SEL = ".cab, .chips, .isla, #msg, #vlista, #ficha, .pie";
+function ponerZoom() {
+  let z = 1;
+  try { const e = Math.min(1.3, Number(window.Gas.escala()) || 1); if (e > 1.01) z = e; } catch (e) {}
+  const ancho = window.innerWidth || 0;
+  if (z > 1 && ancho) z = Math.max(1, Math.min(z, ancho / 300));
+  if (Math.abs(z - 1) <= .01) z = 1;
+  Z = z;
+  document.querySelectorAll(ZOOM_SEL).forEach(el => { el.style.zoom = z === 1 ? "" : z; });
+  document.documentElement.classList.toggle("estrecho", !!ancho && ancho / z < 360);
+}
+ponerZoom();
+window.addEventListener("resize", ponerZoom);
 const COMB = ["95", "98", "Diésel", "Diésel+", "GLP"];
 const $ = id => document.getElementById(id);
 function ls(k, d) { try { const v = localStorage.getItem("g_" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }
@@ -116,7 +162,7 @@ window.alNativo = function (m) {
   if (m.tipo === "datos" && (m.comb !== S.comb || m.radio !== S.radio)) return;
   if (m.tipo === "cargando") { S.cargando = true; muestraMsg(null); }
   else if (m.tipo === "datos") {
-    S.cargando = false; S.datos = m; S.fecha = m.fecha; S.sinRed = m.sinRed; muestraMsg(null);
+    S.cargando = false; S.datos = m; S.fecha = m.fecha; S.sinRed = m.sinRed; S.recibido = Date.now(); muestraMsg(null);
   } else {
     S.cargando = false; S.datos = null;
     if (m.tipo === "sinPermiso") muestraMsg(tr("sin_permiso"),
@@ -149,25 +195,77 @@ function visibles() {
   return l;
 }
 
+function puntos(cx, cy, R, r) { const p = []; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r : R; p.push((cx + rr * Math.cos(a)).toFixed(1) + "," + (cy + rr * Math.sin(a)).toFixed(1)); } return p.join(" "); }
+const EST = puntos(24, 25.5, 19, 8.6);
+const estrella = on => '<svg viewBox="0 0 48 48" aria-hidden="true"><polygon points="' + EST + '" fill="' + (on ? "#81D4FA" : "#FFFFFF") +
+  '" stroke="#78858F" stroke-width="3.2" stroke-linejoin="round"/></svg>';
+
 function filaHtml(g, min) {
   const et = g.h24 ? '<span class="ins">' + esc(tr("h24")) + '</span>' : g.ab === 2 ? '<span class="ins mal">' + esc(tr("cerrada")) + '</span>' : "";
   const sub = [bonito(g.l), fk(g.km)].filter(Boolean).join(" · ");
-  return '<div class="fila" data-id="' + esc(g.id) + '"><div class="cuerpo"><div class="nombre">' + esc(g.r) + '</div>' +
+  const fav = S.favs.has(g.id), txt = esc(tr(fav ? "quitar_fav" : "anadir_fav"));
+  return '<div class="hueco" data-id="' + esc(g.id) + '"><div class="detras"><span class="lado izq">' + estrella(!fav) + '<span class="t">' + txt +
+    '</span></span><span class="lado der"><span class="t">' + txt + '</span>' + estrella(!fav) + '</span></div>' +
+    '<div class="fila"><div class="cuerpo"><div class="nombre">' + esc(g.r) + '</div>' +
     (g.d ? '<div class="sub">' + esc(bonito(g.d)) + '</div>' : "") + '<div class="sub">' + esc(sub) +
-    '</div>' + et + '</div><div class="precio' + (g.p === min ? " barata" : "") + '">' + fp(g.p) + '</div>' +
-    '<button class="estrella" aria-label="' + esc(tr("favorita")) + '">' + (S.favs.has(g.id) ? "★" : "☆") + "</button></div>";
+    '</div>' + et + '</div>' + (fav ? '<span class="marca" role="img" aria-label="' + esc(tr("favorita")) + '">' + estrella(true) + '</span>' : "") +
+    '<div class="precio' + (g.p === min ? " barata" : "") + '">' + fp(g.p) + '</div></div></div>';
 }
 
+// cada fila se desliza hacia un lado para marcar/quitar la favorita; tocarla abre el mapa
 function enlaza(cont, porId) {
-  cont.querySelectorAll(".fila").forEach(f => {
-    const g = porId[f.dataset.id];
-    f.onclick = () => Gas.abrirMapa(g.lat, g.lon, g.r);
-    f.querySelector(".estrella").onclick = e => {
-      e.stopPropagation();
-      S.favs.has(g.id) ? S.favs.delete(g.id) : S.favs.add(g.id);
-      guarda("favs", [...S.favs]); pinta();
+  cont.querySelectorAll(".hueco").forEach(h => {
+    const g = porId[h.dataset.id], f = h.querySelector(".fila"), d = h.querySelector(".detras");
+    let a = null, movio = false;
+    f.onclick = () => { if (movio) { movio = false; return; } Gas.abrirMapa(g.lat, g.lon, g.r); };
+    const vuelve = () => { f.classList.remove("arrastrando"); f.style.transform = ""; d.classList.remove("listo"); d.classList.remove("ver-izq"); d.classList.remove("ver-der"); };
+    h.onpointerdown = e => { a = { id: e.pointerId, x0: e.clientX, y0: e.clientY, dx: 0, on: false, w: h.offsetWidth }; movio = false; };
+    h.onpointermove = e => {
+      if (!a || e.pointerId !== a.id) return;
+      const dx = (e.clientX - a.x0) / Z, dy = (e.clientY - a.y0) / Z;   // en unidades de la página (con zoom CSS)
+      if (!a.on) {
+        if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) {
+          a.on = true; movio = true; f.classList.add("arrastrando");
+          try { h.setPointerCapture(e.pointerId); } catch (x) {}
+        } else return;
+      }
+      a.dx = dx; f.style.transform = "translateX(" + dx + "px)";
+      d.classList.toggle("ver-izq", dx > 0); d.classList.toggle("ver-der", dx < 0);
+      d.classList.toggle("listo", Math.abs(dx) > a.w * 0.35);
     };
+    h.onpointerup = () => {
+      if (!a) return;
+      const { on, dx, w } = a; a = null;
+      if (!on) return;
+      if (Math.abs(dx) > w * 0.35) {
+        f.classList.remove("arrastrando");
+        f.style.transform = "translateX(" + (dx > 0 ? w : -w) + "px)";
+        guarda("desliza_usado", true);
+        setTimeout(() => {
+          S.favs.has(g.id) ? S.favs.delete(g.id) : S.favs.add(g.id);
+          guarda("favs", [...S.favs]); pinta();
+        }, 220);
+      } else vuelve();
+      setTimeout(() => { movio = false; }, 0);
+    };
+    h.onpointercancel = () => { if (a && a.on) vuelve(); a = null; };
   });
+}
+
+// pista: la primera fila asoma hacia la izquierda y vuelve; una sola vez por apertura
+const APERTURAS = ls("aperturas", 0) + 1; guarda("aperturas", APERTURAS);
+let pistaHecha = false;
+function pista() {
+  if (pistaHecha || S.vista !== "lista") return;
+  const h = $("vlista").querySelector(".hueco"); if (!h) return;
+  pistaHecha = true;
+  if (ls("desliza_usado", false) || !(APERTURAS <= 3 || APERTURAS % 10 === 0)) return;
+  setTimeout(() => {
+    const hh = $("vlista").querySelector(".hueco"); if (!hh || S.vista !== "lista") return;
+    const f = hh.querySelector(".fila"), d = hh.querySelector(".detras");
+    f.classList.add("pista"); d.classList.add("pista");
+    setTimeout(() => { f.classList.remove("pista"); d.classList.remove("pista"); }, 1700);
+  }, 1000);
 }
 
 let mapa = null, capa = null;
@@ -178,16 +276,18 @@ function pinta() {
   const l = visibles();
   $("rtxt").textContent = tr("radio", S.radio) + (S.datos ? " · " + tr("n_gas", l.length) : S.cargando ? " · " + tr("buscando") : "");
   $("pie").textContent = S.cargando ? tr("cargando") : S.fecha ? tr("pie", S.fecha, S.sinRed) : "";
+  const hm = /(\d{1,2}):(\d{2})/.exec(S.fecha || "");   // solo la hora; la fecha completa sigue en el pie
+  $("hora").innerHTML = S.cargando ? "…" : hm ? esc(tr("actualizado")) + "<b>" + hm[1].padStart(2, "0") + ":" + hm[2] + "</b>" : "";
   const porId = {}; l.forEach(g => porId[g.id] = g);
   const min = l.length ? Math.min(...l.map(g => g.p)) : 0;
   $("vlista").hidden = S.vista !== "lista"; $("vmapa").hidden = S.vista !== "mapa"; $("opciones").hidden = S.vista === "mapa";
   if (S.vista === "lista") {
     const fav = l.filter(g => S.favs.has(g.id)), resto = l.filter(g => !S.favs.has(g.id));
     let h = "";
-    if (fav.length) h += "<h2>" + esc(tr("favoritas")) + "</h2>" + fav.map(g => filaHtml(g, min)).join("") + (resto.length ? "<h2>" + esc(tr("cerca")) + "</h2>" : "");
+    if (fav.length) h += "<h2><span class=\"marca\">" + estrella(true) + "</span>" + esc(tr("favoritas")) + "</h2>" + fav.map(g => filaHtml(g, min)).join("") + (resto.length ? "<h2>" + esc(tr("cerca")) + "</h2>" : "");
     h += resto.map(g => filaHtml(g, min)).join("");
     if (S.datos && !l.length) h = '<div class="msg">' + esc(tr("sin_gas")) + '</div>';
-    $("vlista").innerHTML = h; enlaza($("vlista"), porId);
+    $("vlista").innerHTML = h; enlaza($("vlista"), porId); pista();
   } else pintaMapa(l, porId, min);
 }
 
@@ -246,9 +346,12 @@ $("radio").onchange = () => { guarda("radio", S.radio); cargar(false); };
 $("oprecio").onclick = () => { S.orden = "precio"; guarda("orden", S.orden); pinta(); };
 $("odist").onclick = () => { S.orden = "distancia"; guarda("orden", S.orden); pinta(); };
 $("solo").onchange = e => { S.solo = e.target.checked; guarda("solo", S.solo); pinta(); };
-$("bref").onclick = () => cargar(true);
 $("bvista").onclick = () => { S.vista = S.vista === "mapa" ? "lista" : "mapa"; guarda("vista", S.vista); pinta(); };
 traducirPagina(); pinta(); cargar(false);
+// al volver a la app tras más de 30 min en segundo plano, se vuelve a cargar (Datos.obtener baja precios nuevos si los guardados son viejos)
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && !S.cargando && S.recibido && Date.now() - S.recibido > 30 * 60 * 1000) cargar(false);
+});
 </script>
 </body>
 </html>

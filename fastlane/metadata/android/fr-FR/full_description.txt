@@ -1,0 +1,9 @@
+Carburant pas cher affiche les stations-service les moins chères dans le rayon de votre choix (de 1 à 50 km) autour de vous, avec les prix officiels du ministère espagnol de la Transition écologique. Elle fonctionne donc en Espagne.
+
+• Sans plomb 95 et 98, gazole, gazole premium et GPL.
+• Liste triée par prix ou par distance, la moins chère en vert, ou carte avec le prix sur chaque station.
+• Favoris en haut de liste, filtre « Ouvertes maintenant » et repère pour les stations ouvertes 24h/24.
+• Toucher une station ouvre l'appli de cartes de votre choix.
+• Widget « Les 3 moins chères ».
+
+Sans compte, sans pub, sans pistage. Votre position ne sert qu'à calculer les distances sur le téléphone et n'est envoyée nulle part. Sans connexion, l'appli affiche les derniers prix enregistrés avec leur date. Logiciel libre (GPL-3.0).

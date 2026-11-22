@@ -1,0 +1,9 @@
+Benzineres mostra les benzineres més barates dins del radi que triïs (d'1 a 50 km) al voltant d'on ets, amb els preus oficials del Ministeri per a la Transició Ecològica.
+
+• Gasolina 95 i 98, dièsel, dièsel prèmium i GLP.
+• Llista ordenada per preu o per distància, amb la més barata en verd, o mapa amb el preu a cada benzinera.
+• Preferides a dalt de tot, filtre «Només obertes ara» i etiqueta per a les de 24 hores.
+• En tocar una benzinera s'obre l'app de mapes que triïs.
+• Widget «Les 3 més barates».
+
+Sense comptes, sense anuncis i sense seguiment. La ubicació només es fa servir al mòbil per calcular distàncies i no s'envia enlloc. Sense connexió, mostra els últims preus desats amb la seva data. Programari lliure (GPL-3.0).

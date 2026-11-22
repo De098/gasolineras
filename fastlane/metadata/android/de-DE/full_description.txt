@@ -1,0 +1,9 @@
+Günstig tanken zeigt dir die günstigsten Tankstellen im gewünschten Umkreis (1 bis 50 km) um deinen Standort – mit den offiziellen Preisen des spanischen Ministeriums für den ökologischen Wandel. Die App funktioniert also in Spanien.
+
+• Super 95 und Super Plus 98, Diesel, Premium-Diesel und Autogas (LPG).
+• Liste nach Preis oder Entfernung sortiert, die günstigste in Grün, oder eine Karte mit dem Preis an jeder Tankstelle.
+• Favoriten ganz oben, Filter „Nur geöffnete“ und Kennzeichnung für 24-Stunden-Tankstellen.
+• Ein Tipp auf eine Tankstelle öffnet die Karten-App deiner Wahl.
+• Widget „Die 3 günstigsten“.
+
+Kein Konto, keine Werbung, kein Tracking. Dein Standort wird nur auf dem Handy zum Berechnen der Entfernungen genutzt und nirgendwohin gesendet. Ohne Verbindung zeigt die App die zuletzt gespeicherten Preise mit Datum. Freie Software (GPL-3.0).
