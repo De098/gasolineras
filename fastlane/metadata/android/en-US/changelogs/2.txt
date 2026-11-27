@@ -1,0 +1,5 @@
+New languages: English, French, Catalan, German, Italian and Portuguese.
+Recordatorios colours, also on the map and the widget.
+Swipe a station to add it to favourites.
+Large text without breaking the layout.
+Refreshes itself after 30 minutes, also when you come back to the app.

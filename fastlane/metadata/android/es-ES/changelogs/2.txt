@@ -1,0 +1,5 @@
+Idiomas nuevos: inglés, francés, catalán, alemán, italiano y portugués.
+Colores de Recordatorios, también en el mapa y el widget.
+Favoritas deslizando la gasolinera.
+Letra grande sin descuadrar.
+Se actualiza sola si han pasado más de 30 minutos, también al volver a la app.
